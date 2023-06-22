@@ -25,7 +25,7 @@ def extract_data(data_interval_end):
     URL = join('https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/',
                 f'{city}/{data_interval_end}/{ds_add(data_interval_end,7)}?unitGroup=metric&include=days&key={key}&contentType=csv')
     df = pd.read_csv(URL)
-    file_path = f'/opt/airflow/used_paste/data_pipeline/weeks/week={data_interval_end}/'
+    file_path = f'/opt/airflow/env_exchange/climate_data/weeks/week={data_interval_end}/'
     df.to_csv(file_path + 'raw_data.csv')
     df[['datetime', 'tempmin', 'temp', 'tempmax']].to_csv(file_path + 'temperatures.csv')
     df[['datetime', 'description', 'icon']].to_csv(file_path + 'conditions.csv')
@@ -38,7 +38,7 @@ with DAG(
 ) as dag:
     task_1 = BashOperator(
         task_id = 'make_paste',
-        bash_command='mkdir /opt/airflow/used_paste/data_pipeline/weeks/week={{data_interval_end.strftime("%Y-%m-%d")}}'
+        bash_command='mkdir /opt/airflow/env_exchange/climate_data/weeks/week={{data_interval_end.strftime("%Y-%m-%d")}}'
     )
     task_2 = PythonOperator(
         task_id = 'extract_data',
