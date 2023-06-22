@@ -33,7 +33,7 @@ def extract_data(data_interval_end):
 
 with DAG(
         "dados_climaticos",
-        start_date=pendulum.datetime(2022, 8, 22, tz="UTC"),
+        start_date=pendulum.datetime(2022, 7, 22, tz="UTC"),
         schedule_interval='0 0 * * 1', # executes every monday
 ) as dag:
     task_1 = BashOperator(
