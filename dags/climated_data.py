@@ -20,7 +20,7 @@ def extract_data(data_interval_end):
     load_dotenv(dotenv_path=Path("/opt/airflow/env_exchange/.env"))
 
     city = 'Belem'
-    key = os.environ.get("API_KEY")
+    key = os.environ.get('API_KEY')
 
     URL = join('https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/',
                 f'{city}/{data_interval_end}/{ds_add(data_interval_end,7)}?unitGroup=metric&include=days&key={key}&contentType=csv')
@@ -36,14 +36,14 @@ with DAG(
         start_date=pendulum.datetime(2022, 7, 22, tz="UTC"),
         schedule_interval='0 0 * * 1', # executes every monday
 ) as dag:
-    task_1 = BashOperator(
+    create_paste = BashOperator(
         task_id = 'make_paste',
         bash_command='mkdir /opt/airflow/env_exchange/climate_data/weeks/week={{data_interval_end.strftime("%Y-%m-%d")}}'
     )
-    task_2 = PythonOperator(
+    extract = PythonOperator(
         task_id = 'extract_data',
         python_callable = extract_data,
         op_kwargs = {'data_interval_end': '{{data_interval_end.strftime("%Y-%m-%d")}}'}
     )
 
-task_1 >> task_2
+create_paste >> extract
